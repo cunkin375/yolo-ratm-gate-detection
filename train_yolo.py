@@ -4,7 +4,11 @@ from ultralytics import YOLO
 
 def main():
     # Load the Nano variant of YOLO26 (NMS-free)
-    model = YOLO("yolo26n.pt")
+    try:
+        model = YOLO("yolo26n.pt")
+    except Exception as e:
+        print(f"Error loading model: {e}")
+        sys.exit(1)
 
     # Execute training
     model.train(
