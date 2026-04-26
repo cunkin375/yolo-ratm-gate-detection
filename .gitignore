@@ -1,9 +1,12 @@
 # datasets
 drone-racing-dataset/
 old_dataset/
+dataset-sample/
 dataset/
 images/
 dataset.zip
+dataset-sample.zip
+grayscale-ratm-dataset
 
 # output from scripts
 output_inference.mp4
@@ -11,3 +14,7 @@ output_inference.mp4
 # output from training
 runs/
 yolo26n.pt
+
+# scripts for VMs
+tnr-shell-setup.sh
+train-yolo-A100.sh
