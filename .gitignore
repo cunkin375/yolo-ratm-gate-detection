@@ -2,3 +2,12 @@
 drone-racing-dataset/
 old_dataset/
 dataset/
+images/
+dataset.zip
+
+# output from scripts
+output_inference.mp4
+
+# output from training
+runs/
+yolo26n.pt
