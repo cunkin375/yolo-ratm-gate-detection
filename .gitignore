@@ -10,6 +10,8 @@ grayscale-ratm-dataset
 
 # output from scripts
 output_inference.mp4
+outputs/
+outputs.zip
 
 # output from training
 runs/
@@ -18,3 +20,6 @@ yolo26n.pt
 # scripts for VMs
 tnr-shell-setup.sh
 train-yolo-A100.sh
+
+# python generated files
+__pycache__/
