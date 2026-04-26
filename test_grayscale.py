@@ -7,14 +7,7 @@ import cv2
 
 from ultralytics import YOLO
 
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: python test_grayscale.py <path_to_video_or_image>")
-        sys.exit(1)
-
-    media_path = sys.argv[1]
-
-
+def run(input_media: str, output_path="ouptut_inference.mp4"):
     # Check for exported engine first, fallback to .pt
     train_dirs = glob.glob("runs/detect/train*")
     if not train_dirs:
@@ -37,17 +30,15 @@ def main():
     # But YOLO class encapsulates this. The prompt states:
     # "ensure the input frame is converted to grayscale via OpenCV... before being passed"
 
-    output_path = "output_inference.mp4"
-
-    if os.path.isdir(media_path):
+    if os.path.isdir(input_media):
         # Handle directory of images
         image_files = sorted([
-            os.path.join(media_path, f) for f in os.listdir(media_path)
+            os.path.join(input_media, f) for f in os.listdir(input_media)
             if f.lower().endswith(('.png', '.jpg', '.jpeg'))
         ])
 
         if not image_files:
-            print(f"No images found in directory: {media_path}")
+            print(f"No images found in directory: {input_media}")
             sys.exit(1)
 
         print(f"Found {len(image_files)} images in directory. Processing...")
@@ -64,9 +55,12 @@ def main():
 
             # Convert to grayscale
             gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            # The model expects 3 channels, so we convert the 1-channel grayscale image back to a 3-channel format
+            # where all channels have the same grayscale value.
+            gray_3c = cv2.cvtColor(gray_frame, cv2.COLOR_GRAY2BGR)
 
             # Inference
-            results = model(gray_frame)
+            results = model(gray_3c)
 
             # Display
             annotated_frame = results[0].plot()
@@ -80,19 +74,20 @@ def main():
         print(f"Video saved to {output_path}")
 
     else:
-        cap = cv2.VideoCapture(media_path)
+        cap = cv2.VideoCapture(input_media)
         if not cap.isOpened():
             # Fallback to image reading
-            frame = cv2.imread(media_path)
+            frame = cv2.imread(input_media)
             if frame is None:
                 print("Failed to load media.")
                 sys.exit(1)
 
             # Convert to grayscale
             gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            gray_3c = cv2.cvtColor(gray_frame, cv2.COLOR_GRAY2BGR)
 
             # Run inference
-            results = model(gray_frame)
+            results = model(gray_3c)
 
             while True:
                 results[0].show()   # Open display window
@@ -122,9 +117,10 @@ def main():
 
             # Convert to grayscale
             gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            gray_3c = cv2.cvtColor(gray_frame, cv2.COLOR_GRAY2BGR)
 
             # Inference
-            results = model(gray_frame)
+            results = model(gray_3c)
 
             # Display
             annotated_frame = results[0].plot()
@@ -141,4 +137,10 @@ def main():
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) < 2:
+        print("Usage: python test_grayscale.py <path_to_video_or_image>")
+        sys.exit(1)
+
+    media_path = sys.argv[1]
+
+    run(media_path)
