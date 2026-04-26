@@ -12,7 +12,7 @@ def main():
 
     # Execute training
     model.train(
-        data="drl_gates.yaml",
+        data="dataset/drl_gates.yaml",
         epochs=50,
         save_period=10,        # Save model every 10 epochs
         imgsz=640,
