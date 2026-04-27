@@ -26,10 +26,6 @@ def run(input_media: str, output_path="ouptut_inference.mp4"):
     print(f"Loading model from {model_path}")
     model = YOLO(model_path, task='detect')
 
-    # Ensure it's treated as an NMS-free check by examining the model architecture or output if needed
-    # But YOLO class encapsulates this. The prompt states:
-    # "ensure the input frame is converted to grayscale via OpenCV... before being passed"
-
     if os.path.isdir(input_media):
         # Handle directory of images
         image_files = sorted([
@@ -55,9 +51,7 @@ def run(input_media: str, output_path="ouptut_inference.mp4"):
 
             # Convert to grayscale
             gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            # The model expects 3 channels, so we convert the 1-channel grayscale image back to a 3-channel format
-            # where all channels have the same grayscale value.
-            gray_3c = cv2.cvtColor(gray_frame, cv2.COLOR_GRAY2BGR)
+            gray_3c = cv2.cvtColor(gray_frame, cv2.COLOR_GRAY2BGR) # supports 3 channel input model
 
             # Inference
             results = model(gray_3c)
@@ -74,6 +68,7 @@ def run(input_media: str, output_path="ouptut_inference.mp4"):
         print(f"Video saved to {output_path}")
 
     else:
+        # Handle video input
         cap = cv2.VideoCapture(input_media)
         if not cap.isOpened():
             # Fallback to image reading
